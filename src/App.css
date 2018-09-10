@@ -1,0 +1,82 @@
+.App {
+  text-align: center;
+}
+
+.header {
+  color: white;
+}
+
+h1 {
+  font-weight: 400;
+  font-size: 50px;
+}
+
+.login {
+  margin-top: 4rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.sign-up-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.add-picture {
+  position: relative;
+  margin: 0 auto;
+  margin-top: 50px;
+  width: 300px;
+}
+
+.add-picture-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.add-picture-input {
+  align-content: center;
+  align-self: center;
+  position: absolute;
+  margin-top: 30px;
+  padding: 30px;
+  height: 100px;
+  cursor: pointer;
+}
+
+.sign-up {
+  margin-top: 4rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-row-gap: 70px;
+}
+
+.inputs {
+  background: none;
+  outline: none;
+  color: white;
+  border: 0;
+  border-bottom: 2px white solid;
+  font-size: 20px;
+  width: 20rem;
+}
+
+.inputs::placeholder {
+  color: white;
+}
+
+.login-and-sign-up-button {
+  background: transparent;
+  border: none;
+  size: 20%;
+  cursor: pointer;
+}
+
+.sign-up-button {
+  margin-top: 2vh;
+  margin-bottom: 20vh;
+}
+
+.login-and-sign-up__img {
+  width: 300px;
+}
