@@ -11,6 +11,20 @@ h1 {
   font-size: 50px;
 }
 
+p {
+  color: white;
+}
+
+.link-container > Link, p {
+  display: inline-block;
+  align-items: center;
+}
+
+.link {
+  color: rgb(245, 245, 107);
+  text-decoration: none;
+}
+
 .login {
   margin-top: 4rem;
   display: grid;
@@ -34,6 +48,7 @@ h1 {
   align-items: center;
   justify-content: center;
 }
+
 .add-picture-input {
   align-content: center;
   align-self: center;
@@ -77,6 +92,11 @@ h1 {
   margin-bottom: 20vh;
 }
 
+.login-button {
+  margin-top: 50vh;
+}
+
 .login-and-sign-up__img {
   width: 300px;
 }
+
