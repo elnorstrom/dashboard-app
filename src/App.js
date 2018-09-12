@@ -4,7 +4,7 @@ import Login from './components/Login';
 import SignUp from './components/SignUp';
 import Dashboard from './components/Dashboard';
 import './App.css';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { HashRouter, Route, Switch } from 'react-router-dom';
 
 const users = {
   dave: {
@@ -64,7 +64,7 @@ class App extends Component {
   getWeather() {
     let lat = this.state.coordinates.lat;
     let long = this.state.coordinates.long;
-    fetch(`http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&units=metric&APPID=d0a10211ea3d36b0a6423a104782130e`)
+    fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&units=metric&APPID=d0a10211ea3d36b0a6423a104782130e`)
       .then(response => response.json())
       .then(result => {
         let location = result.name;
@@ -163,7 +163,7 @@ class App extends Component {
 
   render() {
     return (
-    <BrowserRouter>
+    <HashRouter>
       <div className="App">
         <Header currentUser={this.state.currentUser}/>
         <Switch>
@@ -208,7 +208,7 @@ class App extends Component {
           }
         </Switch>
       </div>
-    </BrowserRouter>
+    </HashRouter>
     );
   };
 };
