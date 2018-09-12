@@ -1,12 +1,11 @@
 import React from 'react';
-import registerButton from './assests/Register_button.png';
-import addPicture from './assests/Add_picture.png';
+import registerButton from '../assests/Register_button.png';
 import { Link } from 'react-router-dom';
 
 const SignUp = (props) => (
   <div>
     <form
-      className="sign-up-form"
+      className="sign-up-and-login-form"
       onSubmit={props.handleSignUp}
     >
       <div className="sign-up">
@@ -54,11 +53,20 @@ const SignUp = (props) => (
           />
         </div>
       </div>
-      {props.passwordsDoNotMatch ? <p>Sorry, the provided passwords do not match, please try again.</p> : <p>&nbsp;</p> }
-      <div className="add-picture-container">
-        <img className="add-picture" src={addPicture}/>
-        <input className="add-picture-input" type="file" placeholder="Add picture"/>
-        <p className="add-picture-input">Add Picture</p>
+      {props.passwordsDoNotMatch ?
+        <div>
+          <p>Sorry, the provided passwords do not match, please try again.</p>
+        </div>
+        :
+        <p>&nbsp;</p>
+      }
+      {props.isAuthenticated && <Link className="link login-link" to="/welcome">Success! Go to dashboard!</Link>}
+      <div
+        className="add-picture-container"
+        onClick={() => document.getElementById('picture-input').click()}
+      >
+        <p>Add Picture</p>
+        <input className="add-picture-input" type="file" placeholder="Add picture" id="picture-input"/>
       </div>
       <button
         type="submit"
@@ -73,10 +81,8 @@ const SignUp = (props) => (
     <div className="link-container">
       <p>Already a member?</p>
       <Link className="link" to="/login">&nbsp;Login</Link>
-  </div>
-  <div onClick={() => console.log(props.user.users)}>Show users</div>
+    </div>
   </div>
 );
 
 export default SignUp;
-
