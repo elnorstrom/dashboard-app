@@ -1,10 +1,12 @@
 import React from 'react';
-import loginButton from './assests/Login_button.png';
+import loginButton from '../assests/Login_button.png';
 import { Link } from 'react-router-dom';
 
 const Login = (props) => (
   <div>
-    <form onSubmit={(e) => props.handleLogIn(e)}>
+    <form
+      className="sign-up-and-login-form"
+      onSubmit={(e) => props.handleLogIn(e)}>
       <div className="login">
         <div>
           <label htmlFor="username"></label>
@@ -14,6 +16,7 @@ const Login = (props) => (
             name="username"
             placeholder="Username"
             required
+            onChange={(e) => props.handleUsername(e)}
           />
         </div>
         <div>
@@ -24,9 +27,12 @@ const Login = (props) => (
             name="password"
             placeholder="Password"
             required
+            onChange={(e) => props.handlePassword(e)}
           />
         </div>
       </div>
+      {props.incorrectLogin ? <p>Sorry, the login details do not match, please try again.</p> : <p>&nbsp;</p>}
+      {props.isAuthenticated && <div><Link className="link" to="/welcome">Success! Go to dashboard!</Link></div>}
       <button
         type="submit"
         className="login-and-sign-up-button login-button"

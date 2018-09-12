@@ -1,11 +1,17 @@
 import React, { Component } from 'react';
-import Header from './Header';
-import Login from './Login';
-import SignUp from './SignUp';
+import Header from './components/Header';
+import Login from './components/Login';
+import SignUp from './components/SignUp';
+import Dashboard from './components/Dashboard';
 import './App.css';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
-let users = {}
+const users = {
+  dave: {
+    username: 'dave',
+    password: 'pass'
+  }
+};
 
 class App extends Component {
   constructor(props) {
@@ -17,18 +23,23 @@ class App extends Component {
     this.handleConfirmPassword = this.handleConfirmPassword.bind(this);
     this.handleUsername = this.handleUsername.bind(this);
     this.handleLogIn = this.handleLogIn.bind(this);
+    this.resetUser = this.resetUser.bind(this);
     this.state = {
       passwordsDoNotMatch: false,
-      userIsLoggedIn: false,
+      incorrectLogin: false,
+      isAuthenticated: false,
+      currentUser: '',
       coordinates: {
         lat: '',
         long: ''
-      },    
+      },
+      temperature: '',
+      loaction: '',
+      weather: '',    
       email: '',
       username: '',
       password: '',
-      confirmPassword: '',
-      user: []
+      confirmPassword: ''
     };
   };
 
@@ -38,8 +49,6 @@ class App extends Component {
     navigator.geolocation.getCurrentPosition((location) => {
       lat = location.coords.latitude;
       long = location.coords.longitude;
-      console.log(location);
-      console.log(lat, long);
     });
     setTimeout(() => {
       this.setState(() => ({
@@ -48,55 +57,80 @@ class App extends Component {
           long: long
         }
       }));
+      this.getWeather();
     }, 5000);
   }
-
-  componentDidUpdate() {
-    console.log(this.state);
-    this.getWeather();
-  }
-
+  
   getWeather() {
     let lat = this.state.coordinates.lat;
     let long = this.state.coordinates.long;
-      fetch(`http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&APPID=d0a10211ea3d36b0a6423a104782130e`)
+    fetch(`http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&units=metric&APPID=d0a10211ea3d36b0a6423a104782130e`)
       .then(response => response.json())
-      .then(result => console.log(result));
+      .then(result => {
+        let location = result.name;
+        let temperature = result.main.temp;
+        let weather = result.weather[0].main;
+        this.setState(() => ({
+          temperature,
+          location,
+          weather
+        }));
+      });
   };
 
-  handleSignUp(e) {
+  handleLogIn(e) {
     e.preventDefault();
-    console.log('Sign up submitted!');
+    let username = this.state.username;
     let password = this.state.password;
-    let confirmPassword = this.state.confirmPassword;
-    let newUser = {
-      username: this.state.username,
-      email: this.state.email,
-      password: this.state.password,
-    };
-    if (password !== confirmPassword) {
+    if (users[username] && users[username].password === password) {
       this.setState(() => ({
-        passwordsDoNotMatch: true
+        isAuthenticated: true,
+        incorrectLogin: false,
+        currentUser: this.state.username
       }));
     } else {
-      this.setState((prevState) => ({
-        passwordsDoNotMatch: false,
-        user: prevState.user.concat(newUser)
+      this.setState(() => ({
+        incorrectLogin: true,
+        isAuthenticated: false
       }));
     };
-    if (this.state.user.length > 0) {
-      let userName = this.state.user[0].username;
-      let email = this.state.user[0].password;
-      let password = this.state.user[0].email;
+  }
+
+  // Sets up a new user in a temp/mock database 'user'
+  handleSignUp(e) {
+    e.preventDefault();
+    let password = this.state.password;
+    let confirmPassword = this.state.confirmPassword;
+    if (password !== confirmPassword) {
+      this.setState(() => ({
+        passwordsDoNotMatch: true,
+        isAuthenticated: false,
+      }));
+    return;
+    } else {
+      let userName = this.state.username;
       users[userName] = {
         username: userName,
-        email: email,
-        password: password
+        email: this.state.email,
+        password: this.state.password,
       };
-      console.log(users);
+      this.setState(() => ({
+        isAuthenticated: true,
+        currentUser: userName,
+      }))
     }
-    console.log('Sign up completed!');
-    console.log(this.state.user);
+    this.getWeather();
+    this.resetUser();
+  };
+
+  resetUser() {
+    this.setState(() => ({
+      passwordsDoNotMatch: false,    
+      email: '',
+      username: '',
+      password: '',
+      confirmPassword: '',
+    }));
   };
 
   handleUsername(e) {
@@ -104,38 +138,26 @@ class App extends Component {
     this.setState(() => ({
       username: username
     }));
-    console.log(this.state.signUp);
-  }
+  };
 
   handleEmailChange(e) {
     let email = e.target.value;
     this.setState(() => ({  
       email: email
     }));
-    console.log(this.state.signUp);
-  }
+  };
 
   handlePassword(e) {
     let password = e.target.value;
     this.setState(() => ({
       password: password
     }));
-    console.log(this.state.signUp);
-  }
+  };
 
   handleConfirmPassword(e) {
     let confirmPassword = e.target.value;
     this.setState(() => ({
       confirmPassword: confirmPassword
-    }));
-    console.log(this.state.signUp);
-  }
-
-  handleLogIn(e) {
-    e.preventDefault();
-    console.log('logged in!');
-    this.setState(() => ({
-      userIsLoggedIn: true
     }));
   };
 
@@ -143,17 +165,22 @@ class App extends Component {
     return (
     <BrowserRouter>
       <div className="App">
-        <Header />
+        <Header currentUser={this.state.currentUser}/>
         <Switch>
           <Route
-            path='(/login|/)'
+            path="(/login|/)"
             exact
             render={() => <Login
-              handleLogIn={this.handleLogIn}  
+              handleUsername={this.handleUsername}
+              handlePassword={this.handlePassword}
+              handleLogIn={this.handleLogIn} 
+              incorrectLogin={this.state.incorrectLogin}
+              isAuthenticated={this.state.isAuthenticated}
+              currentUser={this.state.currentUser}
             />}
           />
           <Route
-            path='/signup'
+            path="/signup"
             exact
             render={() => <SignUp
               passwordsDoNotMatch={this.state.passwordsDoNotMatch}
@@ -163,14 +190,27 @@ class App extends Component {
               handlePassword={this.handlePassword}
               handleConfirmPassword={this.handleConfirmPassword}
               user={this.state}
+              isAuthenticated={this.state.isAuthenticated}
+              currentUser={this.state.currentUser}
             />}
           />
+          {this.state.isAuthenticated && 
+            <Route
+              path="/welcome"
+              exact
+              render={() => <Dashboard
+                currentUser={this.state.currentUser}  
+                weather={this.state.weather}
+                location={this.state.location}
+                temperature={this.state.temperature}
+              />}
+            />
+          }
         </Switch>
       </div>
     </BrowserRouter>
     );
-  }
-}
+  };
+};
 
 export default App;
-
