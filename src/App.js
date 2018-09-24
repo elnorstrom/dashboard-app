@@ -3,6 +3,7 @@ import Header from './components/Header';
 import Login from './components/Login';
 import SignUp from './components/SignUp';
 import Dashboard from './components/Dashboard';
+import NewsApp from './components/NewsApp';
 import './App.css';
 import { HashRouter, Route, Switch } from 'react-router-dom';
 
@@ -24,6 +25,7 @@ class App extends Component {
     this.handleUsername = this.handleUsername.bind(this);
     this.handleLogIn = this.handleLogIn.bind(this);
     this.resetUser = this.resetUser.bind(this);
+    this.logState = this.logState.bind(this);
     this.state = {
       passwordsDoNotMatch: false,
       incorrectLogin: false,
@@ -76,8 +78,18 @@ class App extends Component {
           weather
         }));
       });
+      fetch('https://newsapi.org/v2/top-headlines?' + 'country=us&' + 'apiKey=7de3dc69937f4d2783f38e5fe2e15904')
+      .then(response => response.json())
+      .then(result => {
+        console.log(result);
+        this.setState(() => ({
+          news: result.articles
+        }))
+      })
   };
-
+  logState() {
+    console.log(this.state);
+  }
   handleLogIn(e) {
     e.preventDefault();
     let username = this.state.username;
@@ -166,6 +178,8 @@ class App extends Component {
     <HashRouter>
       <div className="App">
         <Header currentUser={this.state.currentUser}/>
+        <button onClick={this.logState}>Log State</button>
+        <NewsApp news={this.state.news}/>
         <Switch>
           <Route
             path="(/login|/)"
